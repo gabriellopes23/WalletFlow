@@ -9,7 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        HomeView()
+        TabView {
+            Tab("Home", systemImage: "house") {
+                HomeView()
+            }
+            
+            Tab("Stats", systemImage: "chart.bar.xaxis") {
+                StatsView()
+            }
+            
+            Tab("Profile", systemImage: "person") {
+                Text("Profile")
+            }
+        }
+        .background(.red)
     }
 }
 

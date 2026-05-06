@@ -28,3 +28,12 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? ""
     }
 }
+
+extension Double {
+    func porcentFormatter() -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        
+        return formatter.string(from: self as NSNumber) ?? ""
+    }
+}
