@@ -21,7 +21,7 @@ class AddTransactionViewModel: ObservableObject {
     }
     
     func validForm() -> Bool {
-        if description.isEmpty && amount == 0.0 {
+        if description.isEmpty || amount == 0.0 {
             return false
         } else {
             return true
@@ -35,7 +35,6 @@ class AddTransactionViewModel: ObservableObject {
             selectedCategory = firstCategory
         }
     }
-    
     
     func addTransaction() -> Transaction {
         let newTransaction = Transaction(
@@ -53,5 +52,10 @@ class AddTransactionViewModel: ObservableObject {
         amount = 0.0
         selectedDate = .now
         changeTransactionType(type: .expense)
+    }
+    
+    func submitTransaction(transactionVM: TransactionViewModel) {
+        transactionVM.addNewTransaction(transaction: addTransaction())
+        resetFields()
     }
 }

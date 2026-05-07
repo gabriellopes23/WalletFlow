@@ -9,11 +9,11 @@ import SwiftUI
 
 struct AddTransactionView: View {
     
+    @EnvironmentObject var transactionVM: TransactionViewModel
+    
     @Environment(\.dismiss) var dismiss
     
     @StateObject private var addTransactionVM: AddTransactionViewModel = AddTransactionViewModel()
-    
-    var addTransaction: (Transaction) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -24,8 +24,7 @@ struct AddTransactionView: View {
             FormAddTransactionView(addTransactionVM: addTransactionVM)
             
             ButtonAddTransactionView {
-                addTransaction(addTransactionVM.addTransaction())
-                addTransactionVM.resetFields()
+                addTransactionVM.submitTransaction(transactionVM: transactionVM)
                 dismiss.callAsFunction()
             }
             .opacity(addTransactionVM.validForm() ? 1.0 : 0.7)
@@ -180,5 +179,6 @@ struct ButtonAddTransactionView: View {
 }
 
 #Preview {
-    AddTransactionView(addTransaction: { _ in })
+    AddTransactionView()
+        .environmentObject(TransactionViewModel())
 }

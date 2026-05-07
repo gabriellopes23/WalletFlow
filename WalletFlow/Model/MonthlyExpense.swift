@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct MothlyExpense: Hashable, Comparable {
-    static func < (lhs: MothlyExpense, rhs: MothlyExpense) -> Bool {
+struct MonthlyExpense: Hashable, Comparable {
+    static func < (lhs: MonthlyExpense, rhs: MonthlyExpense) -> Bool {
         return lhs.amount < rhs.amount
     }
     

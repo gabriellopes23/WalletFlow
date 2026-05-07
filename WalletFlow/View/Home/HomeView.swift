@@ -9,7 +9,10 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @StateObject private var homeViewModel: HomeViewModel = HomeViewModel()
+    @StateObject private var testVM = TesteViewModel()
+    
+    @EnvironmentObject var transactionVM: TransactionViewModel
+    
     @State private var path: [Routes] = []
     @State private var showAddTransaction: Bool = false
     
@@ -19,9 +22,16 @@ struct HomeView: View {
                 VStack(spacing: 20) {
                     HeaderView()
                     
-                    TotalBalanceView(totalIncome: homeViewModel.totalIncome, totalExpense: homeViewModel.totalExpense, totalBalance: homeViewModel.totalBalance)
+                    TotalBalanceView(
+                        totalBalance: transactionVM.totalBalance.currencyFormatter(),
+                        totalIncome: transactionVM.totalIncome.currencyFormatter(),
+                        totalExpense: transactionVM.totalExpense.currencyFormatter()
+                    )
                     
-                    ListTransactionsView(goToAllTransactions: { path.append(.allTransaction) }, recentsTransactions: homeViewModel.recentsTransactions)
+                    ListTransactionsView(
+                        goToAllTransactions: { path.append(.allTransaction) },
+                        recentsTransactions: transactionVM.recentsTransactions
+                    )
                 }
                 .padding()
                 .background(.gray.opacity(0.1))
@@ -31,9 +41,7 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $showAddTransaction, content: {
-                AddTransactionView(addTransaction: { transaction in
-                    homeViewModel.addNewTransaction(transaction: transaction)
-                })
+                AddTransactionView()
                     .presentationDetents([.fraction(0.75)])
                     .presentationCornerRadius(16)
                     .interactiveDismissDisabled(true)
@@ -41,10 +49,13 @@ struct HomeView: View {
             .navigationDestination(for: Routes.self) { path in
                 switch path {
                 case .allTransaction:
-                    AllTransactionsView(transactions: homeViewModel.transactions)
+                    AllTransactionsView()
                         .navigationTitle("All Transactions")
                 }
             }
+        }
+        .onAppear {
+            testVM.teste(transactions: transactionVM.transactions)
         }
     }
 }
@@ -71,25 +82,25 @@ struct HeaderView: View {
 
 // MARK: - TotalBalanceView
 struct TotalBalanceView: View {
-    var totalIncome: Double
-    var totalExpense: Double
-    var totalBalance: Double
     
+    var totalBalance: String
+    var totalIncome: String
+    var totalExpense: String
     
     var body: some View {
         VStack(alignment: .leading) {
             Text("Total Balance")
                 .font(.headline)
                 .foregroundStyle(.white.opacity(0.8))
-            Text(totalBalance.currencyFormatter())
+            Text(totalBalance)
                 .font(.largeTitle)
                 .fontWeight(.heavy)
                 .foregroundStyle(.white)
             
             HStack {
-                ItemBalance(image: "arrow.up.right", title: "Income", value: totalIncome.currencyFormatter())
+                ItemBalance(image: "arrow.up.right", title: "Income", value: totalIncome)
                 Spacer()
-                ItemBalance(image: "arrow.down.forward", title: "Expenses", value: totalExpense.currencyFormatter())
+                ItemBalance(image: "arrow.down.forward", title: "Expenses", value: totalExpense)
             }
         }
         .padding()
@@ -172,4 +183,5 @@ struct ButtonAddTransaction: View {
 
 #Preview {
     HomeView()
+        .environmentObject(TransactionViewModel())
 }

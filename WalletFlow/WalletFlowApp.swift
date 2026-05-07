@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct WalletFlowApp: App {
+    
+    @StateObject private var transactionVM: TransactionViewModel = TransactionViewModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(transactionVM)
         }
     }
 }

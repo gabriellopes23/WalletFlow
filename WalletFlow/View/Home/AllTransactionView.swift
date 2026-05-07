@@ -9,12 +9,12 @@ import SwiftUI
 
 struct AllTransactionsView: View {
     
-    var transactions: [Transaction]
+    @EnvironmentObject var transactionVM: TransactionViewModel
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack {
-                ForEach(transactions.sorted(by: { $0.date > $1.date })) { transaction in
+                ForEach(transactionVM.transactions.sorted(by: { $0.date > $1.date })) { transaction in
                     ItemTransactionView(transaction: transaction)
                 }
             }
@@ -25,19 +25,6 @@ struct AllTransactionsView: View {
 }
 
 #Preview {
-    AllTransactionsView(transactions: [
-        Transaction(
-            type: .income,
-            description: "Freelance",
-            amount: 1230.00,
-            category: .freelance,
-            date: mockDate(day: -2)
-        ),
-        Transaction(
-            type: .income,
-            description: "Salario",
-            amount: 1590.88,
-            category: .salary,
-            date: mockDate(day: -1)
-        ),])
+    AllTransactionsView()
+        .environmentObject(TransactionViewModel())
 }

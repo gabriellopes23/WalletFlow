@@ -10,18 +10,21 @@ import Charts
 
 struct StatsView: View {
     
-    @StateObject private var statsVM = StatsViewModel()
+    @EnvironmentObject var transactionVM: TransactionViewModel
     
     var body: some View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 25) {
                 HeaderStatisticView()
                 
-                BalanceView(statsVM: statsVM)
+                BalanceView(
+                    totalIncome: transactionVM.totalIncome.currencyFormatter(),
+                    totalExpense: transactionVM.totalExpense.currencyFormatter()
+                )
                 
-                ChartCircleView(statsVM: statsVM)
+                ChartCircleView(spendingByCategory: transactionVM.spendingByCategory)
                 
-                ChartProgressView(statsVM: statsVM)
+                ChartProgressView(monthlyExpenses: transactionVM.monthlyExpenses)
             }
             .padding()
         }
@@ -41,13 +44,14 @@ struct HeaderStatisticView: View {
 // MARK: - BalanceView
 struct BalanceView: View {
     
-    @ObservedObject var statsVM: StatsViewModel
+    var totalIncome: String
+    var totalExpense: String
     
     var body: some View {
         HStack(spacing: 16) {
-            BalanceStatisticItem(title: "Total Income", value: statsVM.totalIncomeStatis.currencyFormatter())
+            BalanceStatisticItem(title: "Total Income", value: totalIncome)
             
-            BalanceStatisticItem(title: "Total Expenses", value: statsVM.totalExpenseStatis.currencyFormatter())
+            BalanceStatisticItem(title: "Total Expenses", value: totalExpense)
         }
     }
 }
@@ -74,7 +78,7 @@ struct BalanceStatisticItem: View {
 // MARK: - ChartCircleView
 struct ChartCircleView: View {
     
-    @ObservedObject var statsVM: StatsViewModel
+    var spendingByCategory: [CategorySpending]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -83,7 +87,7 @@ struct ChartCircleView: View {
                 .fontWeight(.bold)
             
             Chart {
-                ForEach(statsVM.spendingByCategory, id: \.self) { item in
+                ForEach(spendingByCategory, id: \.self) { item in
                     SectorMark(angle: .value(item.title, item.amount))
                         .foregroundStyle(item.color)
                 }
@@ -91,7 +95,7 @@ struct ChartCircleView: View {
             .frame(height: 150)
             
             LazyVStack(alignment: .leading, spacing: 8) {
-                ForEach(statsVM.spendingByCategory, id: \.self) { item in
+                ForEach(spendingByCategory, id: \.self) { item in
                     ItemChartCircleView(color: item.color, title: item.title, value: item.amount.currencyFormatter(), porcent: item.porcent.porcentFormatter())
                 }
             }
@@ -130,7 +134,7 @@ struct ItemChartCircleView: View {
 // MARK: - ChartProgressView
 struct ChartProgressView: View {
     
-    @ObservedObject var statsVM: StatsViewModel
+    var monthlyExpenses: [MonthlyExpense]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -139,7 +143,7 @@ struct ChartProgressView: View {
                 .fontWeight(.bold)
             
             LazyVStack {
-                ForEach(statsVM.mothlyExpenses, id: \.self) { item in
+                ForEach(monthlyExpenses, id: \.self) { item in
                     HStack {
                         Text(item.month)
                             .font(.caption)
@@ -169,4 +173,5 @@ struct StatisticModifier: ViewModifier {
 
 #Preview {
     StatsView()
+        .environmentObject(TransactionViewModel())
 }

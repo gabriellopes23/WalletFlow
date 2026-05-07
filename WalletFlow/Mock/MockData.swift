@@ -52,6 +52,13 @@ var mockTransactions: [Transaction] = [
         category: .transport,
         date: mockDate(day: -6)
     ),
+    Transaction(
+        type: .expense,
+        description: "Comida",
+        amount: 50.98,
+        category: .food,
+        date: mockDate(day: -6)
+    ),
 ]
 
 func mockDate(day: Int) -> Date {

@@ -37,3 +37,12 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? ""
     }
 }
+
+extension Date {
+    func monthFormatter() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM-yyyy"
+        
+        return formatter.string(from: self)
+    }
+}
