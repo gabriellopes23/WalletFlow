@@ -9,11 +9,9 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @StateObject private var testVM = TesteViewModel()
-    
     @EnvironmentObject var transactionVM: TransactionViewModel
     
-    @State private var path: [Routes] = []
+    @State private var path: [RoutesHome] = []
     @State private var showAddTransaction: Bool = false
     
     var body: some View {
@@ -46,7 +44,7 @@ struct HomeView: View {
                     .presentationCornerRadius(16)
                     .interactiveDismissDisabled(true)
             })
-            .navigationDestination(for: Routes.self) { path in
+            .navigationDestination(for: RoutesHome.self) { path in
                 switch path {
                 case .allTransaction:
                     AllTransactionsView()
@@ -54,13 +52,11 @@ struct HomeView: View {
                 }
             }
         }
-        .onAppear {
-            testVM.teste(transactions: transactionVM.transactions)
-        }
     }
 }
 
 // MARK: - HeadlineView
+
 struct HeaderView: View {
     var body: some View {
         HStack {

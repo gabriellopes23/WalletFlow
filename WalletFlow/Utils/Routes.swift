@@ -7,6 +7,10 @@
 
 import Foundation
 
-enum Routes: Hashable {
+enum RoutesHome: Hashable {
     case allTransaction
+}
+
+enum RoutesProfile: Hashable {
+    case notifications, privacy, help
 }

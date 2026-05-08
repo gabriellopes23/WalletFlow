@@ -22,9 +22,9 @@ struct StatsView: View {
                     totalExpense: transactionVM.totalExpense.currencyFormatter()
                 )
                 
-                ChartCircleView(spendingByCategory: transactionVM.spendingByCategory)
+                ChartCircleView(spendingByCategory: transactionVM.spendingCategories())
                 
-                ChartProgressView(monthlyExpenses: transactionVM.monthlyExpenses)
+                ChartProgressView(monthlyExpenses: transactionVM.monthlyExpenses())
             }
             .padding()
         }
@@ -49,9 +49,9 @@ struct BalanceView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            BalanceStatisticItem(title: "Total Income", value: totalIncome)
+            BalanceStatisticItem(title: "Total Income", value: totalIncome, color: .green)
             
-            BalanceStatisticItem(title: "Total Expenses", value: totalExpense)
+            BalanceStatisticItem(title: "Total Expenses", value: totalExpense, color: .primary)
         }
     }
 }
@@ -61,6 +61,7 @@ struct BalanceStatisticItem: View {
     
     var title: String
     var value: String
+    var color: Color
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -69,9 +70,9 @@ struct BalanceStatisticItem: View {
             Text(value)
                 .font(.title2)
                 .fontWeight(.heavy)
-                .foregroundStyle(.green)
+                .foregroundStyle(color)
         }
-        .modifier(StatisticModifier())
+        .modifier(CardModifier())
     }
 }
 
@@ -100,7 +101,7 @@ struct ChartCircleView: View {
                 }
             }
         }
-        .modifier(StatisticModifier())
+        .modifier(CardModifier())
     }
 }
 
@@ -145,7 +146,7 @@ struct ChartProgressView: View {
             LazyVStack {
                 ForEach(monthlyExpenses, id: \.self) { item in
                     HStack {
-                        Text(item.month)
+                        Text(item.month.monthFormatter())
                             .font(.caption)
                             .foregroundStyle(.gray.opacity(0.7))
                         ProgressView(value: item.porcent)
@@ -157,19 +158,11 @@ struct ChartProgressView: View {
                 }
             }
         }
-        .modifier(StatisticModifier())
+        .modifier(CardModifier())
     }
 }
 
-// MARK: - StatisticModifier
-struct StatisticModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.white, in: .rect(cornerRadius: 16))
-    }
-}
+
 
 #Preview {
     StatsView()

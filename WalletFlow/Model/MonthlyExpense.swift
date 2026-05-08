@@ -13,7 +13,7 @@ struct MonthlyExpense: Hashable, Comparable {
     }
     
     
-    var month: String
+    var month: Date
     var amount: Double
     var porcent: Double
 }

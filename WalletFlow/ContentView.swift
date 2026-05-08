@@ -20,7 +20,7 @@ struct ContentView: View {
             }
             
             Tab("Profile", systemImage: "person") {
-                Text("Profile")
+                ProfileView()
             }
         }
         .background(.red)
