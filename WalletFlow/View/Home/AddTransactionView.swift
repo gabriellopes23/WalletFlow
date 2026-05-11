@@ -81,7 +81,7 @@ struct SegmentedAddTransactionView: View {
         }
         .padding(5)
         .frame(maxWidth: .infinity)
-        .background(.gray.opacity(0.3), in: .rect(cornerRadius: 16))
+        .background(.gray.opacity(0.15), in: .rect(cornerRadius: 16))
     }
 }
 
@@ -180,5 +180,5 @@ struct ButtonAddTransactionView: View {
 
 #Preview {
     AddTransactionView()
-        .environmentObject(TransactionViewModel())
+        .environmentObject(TransactionViewModel(profileVM: ProfileSettingsViewModel()))
 }

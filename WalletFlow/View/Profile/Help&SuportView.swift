@@ -22,11 +22,8 @@ struct Help_SuportView: View {
     
     var body: some View {
         ScrollView(.vertical, content: {
-            VStack(alignment: .leading) {
-                Text("FREQUENTLY ASKED QUESTIONS")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.gray)
+            VStack(alignment: .leading, spacing: 15) {
+                CustomTitleHelpView(title: "FREQUENTLY ASKED QUESTIONS")
                 LazyVStack {
                     ForEach(frequentlyQuestions, id: \.self) { item in
                         VStack(spacing: 15) {
@@ -57,10 +54,33 @@ struct Help_SuportView: View {
                         .modifier(CardModifier())
                     }
                 }
+                
+                CustomTitleHelpView(title: "CONTACT US")
+                ItemOptionsProfileView(icon: "envelope", title: "Email Support", description: "support@walletflow.app") {
+                    // Add action
+                }
+                
+                CustomTitleHelpView(title: "LEGAL")
+                ItemOptionsProfileView(icon: "text.page", title: "Privacy Policy", description: "How we handle your data") {
+                    // Add action
+                }
+                 
             }
             .padding()
         })
         .background(.gray.opacity(0.1))
+    }
+}
+
+// MARK: - CustomTitleHelpView
+struct CustomTitleHelpView: View {
+    
+    var title: String
+    var body: some View {
+        Text(title)
+            .font(.headline)
+            .fontWeight(.bold)
+            .foregroundStyle(.gray)
     }
 }
     

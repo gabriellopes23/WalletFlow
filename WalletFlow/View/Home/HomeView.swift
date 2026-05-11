@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     
     @EnvironmentObject var transactionVM: TransactionViewModel
+    @EnvironmentObject var profileVM: ProfileSettingsViewModel
     
     @State private var path: [RoutesHome] = []
     @State private var showAddTransaction: Bool = false
@@ -21,9 +22,9 @@ struct HomeView: View {
                     HeaderView()
                     
                     TotalBalanceView(
-                        totalBalance: transactionVM.totalBalance.currencyFormatter(),
-                        totalIncome: transactionVM.totalIncome.currencyFormatter(),
-                        totalExpense: transactionVM.totalExpense.currencyFormatter()
+                        totalBalance: hideOrNotValue(value: transactionVM.totalBalance),
+                        totalIncome: hideOrNotValue(value: transactionVM.totalIncome),
+                        totalExpense: hideOrNotValue(value: transactionVM.totalExpense)
                     )
                     
                     ListTransactionsView(
@@ -51,6 +52,16 @@ struct HomeView: View {
                         .navigationTitle("All Transactions")
                 }
             }
+        }
+    }
+    
+    func hideOrNotValue(value: Double) -> String {
+        let newValue = value.currencyFormatter()
+        
+        if profileVM.hideBalanceEnable {
+            return String(newValue.map { $0.isNumber || $0.isPunctuation ? "*" : $0 })
+        } else {
+            return newValue
         }
     }
 }
@@ -92,6 +103,7 @@ struct TotalBalanceView: View {
                 .font(.largeTitle)
                 .fontWeight(.heavy)
                 .foregroundStyle(.white)
+                
             
             HStack {
                 ItemBalance(image: "arrow.up.right", title: "Income", value: totalIncome)
@@ -179,5 +191,5 @@ struct ButtonAddTransaction: View {
 
 #Preview {
     HomeView()
-        .environmentObject(TransactionViewModel())
+        .environmentObject(TransactionViewModel(profileVM: ProfileSettingsViewModel()))
 }

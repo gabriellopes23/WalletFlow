@@ -26,5 +26,5 @@ struct AllTransactionsView: View {
 
 #Preview {
     AllTransactionsView()
-        .environmentObject(TransactionViewModel())
+        .environmentObject(TransactionViewModel(profileVM: ProfileSettingsViewModel()))
 }

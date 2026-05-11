@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-enum TransactionType {
+enum TransactionType: Codable {
     case expense, income
 }
 
-enum TransactionCategory: CaseIterable {
+enum TransactionCategory: CaseIterable, Codable {
     case salary, freelance, bills, food, shopping, transport, health, entertainment, othersExpense, othersIncome
     
     var icon: String {
@@ -115,8 +115,8 @@ enum TransactionCategory: CaseIterable {
     }
 }
 
-struct Transaction: Identifiable {
-    let id = UUID()
+struct Transaction: Codable, Identifiable {
+    var id = UUID()
     var type: TransactionType
     var description: String
     var amount: Double

@@ -166,5 +166,5 @@ struct ChartProgressView: View {
 
 #Preview {
     StatsView()
-        .environmentObject(TransactionViewModel())
+        .environmentObject(TransactionViewModel(profileVM: ProfileSettingsViewModel()))
 }
