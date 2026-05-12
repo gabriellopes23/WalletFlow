@@ -64,28 +64,53 @@ enum TransactionCategory: CaseIterable, Codable {
         }
     }
     
-    var color: Color {
+    var BG: Color {
         switch self {
         case .salary:
-            Color.green
+            Color.salaryBG
         case .freelance:
-            Color.cyan
+            Color.freelanceBG
         case .bills:
-            Color.yellow
+            Color.billsBG
         case .food:
-            Color.orange
+            Color.foodBG
         case .shopping:
-            Color.pink
+            Color.shoppingBG
         case .transport:
-            Color.blue
+            Color.transportBG
         case .health:
-            Color.red
+            Color.healthBG
         case .entertainment:
-            Color.purple
+            Color.entertainmentBG
         case .othersExpense:
-            Color.gray
+            Color.otherBG
         case .othersIncome:
-            Color.gray
+            Color.otherBG
+        }
+    }
+    
+    var foreground: Color {
+        switch self {
+        case .salary:
+            Color.salaryForeground
+        case .freelance:
+            Color.freelanceForeground
+        case .bills:
+            Color.billsForeground
+        case .food:
+            Color.foodForeground
+        case .shopping:
+            Color.shoppingForeground
+        case .transport:
+            Color.transportForeground
+        case .health:
+            Color.healthForeground
+        case .entertainment:
+            Color.entertainmentForeground
+        case .othersExpense:
+            Color.otherForeground
+        case .othersIncome:
+            Color.otherForeground
         }
     }
     

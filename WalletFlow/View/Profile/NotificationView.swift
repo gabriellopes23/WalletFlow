@@ -37,7 +37,7 @@ struct NotificationView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(.gray.opacity(0.1))
+        .background(.customBG)
     }
 }
 

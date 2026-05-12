@@ -9,6 +9,9 @@ import SwiftUI
 
 struct ProfileView: View {
     
+    @EnvironmentObject var transactionVM: TransactionViewModel
+    @EnvironmentObject var authVM: AuthenticationViewModel
+    
     @State private var path: [RoutesProfile] = []
     
     var body: some View {
@@ -16,19 +19,19 @@ struct ProfileView: View {
             ScrollView(.vertical, content: {
                 VStack(alignment: .leading, spacing: 20) {
                     
-                    HeaderProfileView()
+                    HeaderProfileView(name: authVM.nameProfile, email: authVM.emailProfile)
                     
-                    ResumeTransactionsView()
+                    ResumeTransactionsView(resulmeTotalTransactions: transactionVM.transactions.count, resulmeTotalIncome: transactionVM.resulmeTotalIncome, resulmeTotalExpense: transactionVM.resulmeTotalExpense)
                     
                     OptionsProfileView(path: $path)
                     
                     DangerButtonView(icon: "iphone.and.arrow.forward.outward", title: "Log Out", description: "") {
-                        // Add Action
+                        authVM.isLogged = false
                     }
                 }
                 .padding()
             })
-            .background(.gray.opacity(0.1))
+            .background(.customBG)
             .navigationDestination(for: RoutesProfile.self) { path in
                 switch path {
                 case .notifications:
@@ -47,6 +50,9 @@ struct ProfileView: View {
     
     // MARK: - HeaderProfileView
     struct HeaderProfileView: View {
+        var name: String
+        var email: String
+        
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Profile")
@@ -54,18 +60,18 @@ struct ProfileView: View {
                     .fontWeight(.bold)
                 HStack {
                     Image(systemName: "wallet.bifold")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.customPrimary)
                         .padding()
-                        .background(.blue.opacity(0.3), in: .circle)
+                        .background(.customPrimary.opacity(0.2), in: .circle)
                     
                     VStack(alignment: .leading) {
-                        Text("Gabriel Lopes")
+                        Text(name)
                             .font(.title3)
                             .fontWeight(.semibold)
-                        Text("Teste@gmail.com")
-                            .foregroundStyle(.black)
+                        Text(email)
                     }
                 }
+                .foregroundStyle(.customForeground)
                 .modifier(CardModifier())
             }
         }
@@ -73,13 +79,17 @@ struct ProfileView: View {
     
     // MARK: - ResumeTransactionsView
     struct ResumeTransactionsView: View {
+        var resulmeTotalTransactions: Int
+        var resulmeTotalIncome: Int
+        var resulmeTotalExpense: Int
+        
         var body: some View {
             HStack() {
-                ItemResumeTransactionsView(value: "13", title: "Transactions")
+                ItemResumeTransactionsView(value: "\(resulmeTotalTransactions)", title: "Transactions")
                 CustomResumeDivider()
-                ItemResumeTransactionsView(value: "10", title: "Expenses")
+                ItemResumeTransactionsView(value: "\(resulmeTotalExpense)", title: "Expenses")
                 CustomResumeDivider()
-                ItemResumeTransactionsView(value: "3", title: "Incomes")
+                ItemResumeTransactionsView(value: "\(resulmeTotalIncome)", title: "Incomes")
             }
             .modifier(CardModifier())
         }
@@ -145,4 +155,6 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
+        .environmentObject(AuthenticationViewModel())
+        .environmentObject(TransactionViewModel(profileVM: ProfileSettingsViewModel()))
 }

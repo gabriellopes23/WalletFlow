@@ -17,23 +17,24 @@ struct AuthenticationView: View {
     
     @State private var isSelectedAuthType: Authentication = .signin
     @State private var fullName: String = ""
-    @State private var email: String = "teste@gmail.com"
-    @State private var password: String = "123456"
+    @State private var email: String = ""
+    @State private var password: String = ""
     
     var body: some View {
         VStack(spacing: 30) {
             VStack(spacing: 10) {
                 Image(systemName: "wallet.bifold")
                     .padding()
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.customPrimary)
                     .font(.largeTitle)
                     .fontWeight(.semibold)
                     .frame(width: 80, height: 80)
-                    .background(.blue, in: .rect(cornerRadius: 16))
+                    .background(.customPrimary.opacity(0.2), in: .rect(cornerRadius: 16))
                 
                 Text("WalletFlow")
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                    .foregroundStyle(.customForeground)
                 
                 Text("Your personal finance manager")
                     .foregroundStyle(.gray)
@@ -58,29 +59,42 @@ struct AuthenticationView: View {
             
             VStack {
                 if isSelectedAuthType == .register {
-                    CustomTextFieldAuthentication(text: $fullName, titleKey: "Full Name")
+                    CustomTextFieldAuthentication(text: $fullName, titleKey: "Full Name", isPassowd: false)
                 }
                 
-                CustomTextFieldAuthentication(text: $email, titleKey: "Email")
-                CustomTextFieldAuthentication(text: $password, titleKey: "Password")
+                CustomTextFieldAuthentication(text: $email, titleKey: "Email", isPassowd: false)
+                    .keyboardType(.emailAddress)
+                CustomTextFieldAuthentication(text: $password, titleKey: "Password", isPassowd: true)
             }
             
             Button {
-                authVM.login(email: email, password: password)
+                if isSelectedAuthType == .register {
+                    authVM.register(fullName: fullName, email: email, password: password)
+                } else {
+                    authVM.login(email: email, password: password)
+                }
             } label: {
                 Text(isSelectedAuthType == .signin ? "Sign In" : "Create Account")
                     .padding()
                     .font(.headline)
                     .fontWeight(.heavy)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.customForeground)
                     .frame(maxWidth: .infinity)
-                    .background(.blue, in: .rect(cornerRadius: 16))
+                    .background(.customPrimary, in: .rect(cornerRadius: 16))
             }
-
         }
+        .alert(authVM.errorMassage, isPresented: $authVM.showError, actions: {
+            Button("Ok", role: .cancel, action: {})
+        })
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.gray.opacity(0.1))
+        .background(.customBG)
+    }
+    
+    func resetFields() {
+        fullName = ""
+        email = ""
+        password = ""
     }
 }
 
@@ -89,15 +103,27 @@ struct CustomTextFieldAuthentication: View {
     
     @Binding var text: String
     var titleKey: String
+    var isPassowd: Bool
     
     var body: some View {
-        TextField(titleKey, text: $text)
-            .padding()
-            .background(.white, in: .rect(cornerRadius: 16))
-            .overlay {
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(.gray.opacity(0.15), lineWidth: 1)
-            }
+        if isPassowd {
+            SecureField(titleKey, text: $text)
+                .padding()
+                .background(.customCard, in: .rect(cornerRadius: 16))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(.gray.opacity(0.15), lineWidth: 1)
+                }
+        } else {
+            TextField(titleKey, text: $text)
+                .padding()
+                .background(.customCard, in: .rect(cornerRadius: 16))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(.gray.opacity(0.15), lineWidth: 1)
+                }
+        }
+            
     }
 }
 

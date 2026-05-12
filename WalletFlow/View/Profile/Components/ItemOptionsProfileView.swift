@@ -25,7 +25,7 @@ struct ItemOptionsProfileView: View {
                     .frame(width: 40, height: 40)
                     .foregroundStyle(.gray)
                     .fontWeight(.semibold)
-                    .background(.gray.opacity(0.3), in: .rect(cornerRadius: 10))
+                    .background(.customSecondary, in: .rect(cornerRadius: 10))
                 
                 VStack(alignment: .leading) {
                     Text(title)
@@ -39,11 +39,11 @@ struct ItemOptionsProfileView: View {
                 Spacer()
                 
                 Text(">")
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(.customCardForeground)
             }
             .padding()
-            .foregroundStyle(.black)
-            .background(.white, in: .rect(cornerRadius: 16))
+            .foregroundStyle(.customCardForeground)
+            .background(.customCard, in: .rect(cornerRadius: 16))
         }
         
     }

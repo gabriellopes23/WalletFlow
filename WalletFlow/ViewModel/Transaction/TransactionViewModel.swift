@@ -17,6 +17,9 @@ class TransactionViewModel: ObservableObject {
     @Published var monthly: [Date: Double] = [:]
     @Published var monthlySummary: Double = 0.0
     
+    @Published var resulmeTotalIncome = 0
+    @Published var resulmeTotalExpense = 0
+    
     var profileVM: ProfileSettingsViewModel
     let notificationService = NotificationService()
     
@@ -64,10 +67,12 @@ class TransactionViewModel: ObservableObject {
         
         for transaction in transactions {
             if transaction.type == .income {
+                resulmeTotalIncome += 1
                 totalIncome += transaction.amount
             }
             
             if transaction.type == .expense {
+                resulmeTotalExpense += 1
                 totalExpense += transaction.amount
                 
                 categories[transaction.category, default: 0.0] += transaction.amount
@@ -109,7 +114,7 @@ class TransactionViewModel: ObservableObject {
                     porcent = value / totalExpense
                 }
                 
-                let categorySpending = CategorySpending(title: category.key.title, amount: value, porcent: porcent, color: category.key.color)
+                let categorySpending = CategorySpending(title: category.key.title, amount: value, porcent: porcent, color: category.key.foreground)
                 
                 result.append(categorySpending)
             }

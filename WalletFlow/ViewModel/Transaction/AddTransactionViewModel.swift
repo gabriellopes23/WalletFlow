@@ -11,7 +11,7 @@ import Foundation
 class AddTransactionViewModel: ObservableObject {
     
     @Published var description: String = ""
-    @Published var amount: Double = 0.0
+    @Published var amount: Double? = nil
     @Published var selectedCategory: TransactionCategory = .bills
     @Published var isSelected: TransactionType = .expense
     @Published var selectedDate: Date = .now
@@ -40,7 +40,7 @@ class AddTransactionViewModel: ObservableObject {
         let newTransaction = Transaction(
             type: isSelected,
             description: description,
-            amount: amount,
+            amount: amount ?? 0.0,
             category: selectedCategory,
             date: selectedDate)
         

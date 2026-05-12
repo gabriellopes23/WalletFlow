@@ -26,6 +26,8 @@ struct BiometricView: View {
                 .foregroundStyle(.gray)
         }
         .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.customBG)
     }
 }
 

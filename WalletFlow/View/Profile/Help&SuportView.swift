@@ -18,6 +18,7 @@ var frequentlyQuestions: [FrequentlyQuestions] = [
 
 struct Help_SuportView: View {
     
+    @Environment(\.openURL) var openURL
     @State private var isSelected: String = ""
     
     var body: some View {
@@ -43,7 +44,7 @@ struct Help_SuportView: View {
                                     Spacer()
                                     Image(systemName: "arrow.down")
                                 }
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.customForeground)
                             }
                             if isSelected == item.id {
                                 Text(item.description)
@@ -61,14 +62,13 @@ struct Help_SuportView: View {
                 }
                 
                 CustomTitleHelpView(title: "LEGAL")
-                ItemOptionsProfileView(icon: "text.page", title: "Privacy Policy", description: "How we handle your data") {
-                    // Add action
-                }
-                 
+                    ItemOptionsProfileView(icon: "text.page", title: "Privacy Policy", description: "How we handle your data") {
+                        openURL(URL(string: "https://github.com/gabriellopes23/gabriellopes23.github.io")!)
+                    }
             }
             .padding()
         })
-        .background(.gray.opacity(0.1))
+        .background(.customBG)
     }
 }
 
@@ -80,7 +80,7 @@ struct CustomTitleHelpView: View {
         Text(title)
             .font(.headline)
             .fontWeight(.bold)
-            .foregroundStyle(.gray)
+            .foregroundStyle(.customForeground)
     }
 }
     

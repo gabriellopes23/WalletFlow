@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    
+    @EnvironmentObject var authVM: AuthenticationViewModel
     @EnvironmentObject var transactionVM: TransactionViewModel
     @EnvironmentObject var profileVM: ProfileSettingsViewModel
     
@@ -19,7 +19,7 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 20) {
-                    HeaderView()
+                    HeaderView(firstLetterName: authVM.firstLetterName)
                     
                     TotalBalanceView(
                         totalBalance: hideOrNotValue(value: transactionVM.totalBalance),
@@ -33,7 +33,7 @@ struct HomeView: View {
                     )
                 }
                 .padding()
-                .background(.gray.opacity(0.1))
+                .background(.customBG)
                 
                 ButtonAddTransaction() {
                     showAddTransaction.toggle()
@@ -69,6 +69,9 @@ struct HomeView: View {
 // MARK: - HeadlineView
 
 struct HeaderView: View {
+    
+    var firstLetterName: String
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -79,10 +82,12 @@ struct HeaderView: View {
                     .fontWeight(.bold)
             }
             Spacer()
-            Text("G")
+            Text(firstLetterName)
                 .font(.headline)
+                .fontWeight(.heavy)
+                .foregroundStyle(.customPrimary)
                 .padding()
-                .background(.blue.opacity(0.3), in: .circle)
+                .background(.customPrimary.opacity(0.2), in: .circle)
         }
     }
 }
@@ -95,14 +100,14 @@ struct TotalBalanceView: View {
     var totalExpense: String
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 15) {
             Text("Total Balance")
                 .font(.headline)
-                .foregroundStyle(.white.opacity(0.8))
+                .foregroundStyle(.customPrimaryForeground.opacity(0.8))
             Text(totalBalance)
                 .font(.largeTitle)
                 .fontWeight(.heavy)
-                .foregroundStyle(.white)
+                .foregroundStyle(.customPrimaryForeground)
                 
             
             HStack {
@@ -113,7 +118,7 @@ struct TotalBalanceView: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(.blue, in: .rect(cornerRadius: 16))
+        .background(.customPrimary, in: .rect(cornerRadius: 16))
     }
 }
 
@@ -128,16 +133,16 @@ struct ItemBalance: View {
         HStack {
             Image(systemName: image)
                 .padding()
-                .background(.white.opacity(0.5), in: .circle)
-                .foregroundStyle(.white)
+                .background(.customPrimaryForeground.opacity(0.3), in: .circle)
+                .foregroundStyle(.customPrimaryForeground)
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.8))
+                    .foregroundStyle(.customPrimaryForeground.opacity(0.8))
                 Text(value)
                     .font(.headline)
                     .fontWeight(.heavy)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.customPrimaryForeground)
             }
         }
     }
@@ -150,20 +155,25 @@ struct ListTransactionsView: View {
     var recentsTransactions: [Transaction]
     
     var body: some View {
-        HStack {
-            Text("Recent Transactions")
-                .font(.headline)
-                .fontWeight(.semibold)
-            Spacer()
-            Button("View All") {
-                goToAllTransactions()
+        if recentsTransactions.isEmpty {
+            ContentUnavailableView("No recentes Transations", systemImage: "wallet.bifold", description: Text("There are no recent transactions available at the moment. Click + to add your transactions."))
+        } else {
+            HStack {
+                Text("Recent Transactions")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+                Button("View All") {
+                    goToAllTransactions()
+                }
+                .foregroundStyle(.customPrimary)
             }
-        }
-        
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack {
-                ForEach(recentsTransactions) { transaction in
-                    ItemTransactionView(transaction: transaction)
+            
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack {
+                    ForEach(recentsTransactions) { transaction in
+                        ItemTransactionView(transaction: transaction)
+                    }
                 }
             }
         }
@@ -181,9 +191,9 @@ struct ButtonAddTransaction: View {
         } label: {
             Image(systemName: "plus")
                 .padding()
-                .foregroundStyle(.white)
+                .foregroundStyle(.customPrimaryForeground)
                 .imageScale(.large)
-                .background(.blue, in: .circle)
+                .background(.customPrimary, in: .circle)
                 .padding()
         }
     }
@@ -192,4 +202,6 @@ struct ButtonAddTransaction: View {
 #Preview {
     HomeView()
         .environmentObject(TransactionViewModel(profileVM: ProfileSettingsViewModel()))
+        .environmentObject(ProfileSettingsViewModel())
+        .environmentObject(AuthenticationViewModel())
 }

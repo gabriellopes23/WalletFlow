@@ -22,13 +22,17 @@ struct StatsView: View {
                     totalExpense: transactionVM.totalExpense.currencyFormatter()
                 )
                 
-                ChartCircleView(spendingByCategory: transactionVM.spendingCategories())
-                
-                ChartProgressView(monthlyExpenses: transactionVM.monthlyExpenses())
+                if transactionVM.transactions.isEmpty {
+                    ContentUnavailableView("No Statistic Transactions", systemImage: "chart.bar.xaxis", description: Text("Transaction statistics are not currently available. Click + to add your transactions."))
+                } else {
+                    ChartCircleView(spendingByCategory: transactionVM.spendingCategories())
+                    
+                    ChartProgressView(monthlyExpenses: transactionVM.monthlyExpenses())
+                }
             }
             .padding()
         }
-        .background(.gray.opacity(0.1))
+        .background(.customBG)
     }
 }
 
@@ -51,7 +55,7 @@ struct BalanceView: View {
         HStack(spacing: 16) {
             BalanceStatisticItem(title: "Total Income", value: totalIncome, color: .green)
             
-            BalanceStatisticItem(title: "Total Expenses", value: totalExpense, color: .primary)
+            BalanceStatisticItem(title: "Total Expenses", value: totalExpense, color: .customForeground)
         }
     }
 }
@@ -125,9 +129,10 @@ struct ItemChartCircleView: View {
             
             Text(value)
                 .font(.headline)
+                .foregroundStyle(.customForeground)
             Text(porcent)
                 .font(.caption)
-                .foregroundStyle(.gray.opacity(0.7))
+                .foregroundStyle(.customPrimary.opacity(0.7))
         }
     }
 }

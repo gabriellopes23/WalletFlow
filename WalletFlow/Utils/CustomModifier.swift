@@ -13,6 +13,6 @@ struct CardModifier: ViewModifier {
         content
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.white, in: .rect(cornerRadius: 16))
+            .background(.customCard, in: .rect(cornerRadius: 16))
     }
 }

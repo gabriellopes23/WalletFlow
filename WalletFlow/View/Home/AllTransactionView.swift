@@ -20,7 +20,7 @@ struct AllTransactionsView: View {
             }
         }
         .padding()
-        .background(.gray.opacity(0.1))
+        .background(.customBG)
     }
 }
 

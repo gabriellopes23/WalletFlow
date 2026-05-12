@@ -22,7 +22,7 @@ struct ItemNavigationView: View {
                 .frame(width: 40, height: 40)
                 .foregroundStyle(.gray)
                 .fontWeight(.semibold)
-                .background(.gray.opacity(0.3), in: .rect(cornerRadius: 10))
+                .background(.customSecondary, in: .rect(cornerRadius: 10))
             
             VStack(alignment: .leading) {
                 Text(title)
@@ -32,11 +32,13 @@ struct ItemNavigationView: View {
                     .font(.caption)
                     .fontWeight(.thin)
             }
+            .foregroundStyle(.customCardForeground)
             
             Toggle("", isOn: $toggle)
+                .tint(.customPrimary)
         }
         .padding()
         .foregroundStyle(.black)
-        .background(.white, in: .rect(cornerRadius: 16))
+        .background(.customCard, in: .rect(cornerRadius: 16))
     }
 }

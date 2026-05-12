@@ -33,7 +33,7 @@ struct AddTransactionView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.gray.opacity(0.1))
+        .background(.customBG)
     }
 }
 
@@ -119,7 +119,7 @@ struct FormAddTransactionView: View {
                 .modifier(FormModifier())
             
             Text("Amount ($)")
-            TextField("", value: $addTransactionVM.amount, format: .currency(code: "BRL"))
+            TextField("R$0,00", value: $addTransactionVM.amount, format: .currency(code: "BRL"))
                 .modifier(FormModifier())
                 .keyboardType(.decimalPad)
             
@@ -141,6 +141,7 @@ struct FormAddTransactionView: View {
                 DatePicker("Date", selection: $addTransactionVM.selectedDate, displayedComponents: .date)
             }
         }
+        .background(.customBG)
     }
 }
 
@@ -169,8 +170,8 @@ struct ButtonAddTransactionView: View {
             Text("Add Transaction")
                 .padding()
                 .frame(maxWidth: .infinity)
-                .background(.blue, in: .rect(cornerRadius: 16))
-                .foregroundStyle(.white)
+                .background(.customPrimary, in: .rect(cornerRadius: 16))
+                .foregroundStyle(.customPrimaryForeground)
                 .font(.headline)
                 .fontWeight(.heavy)
             

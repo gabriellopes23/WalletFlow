@@ -35,12 +35,12 @@ struct DangerButtonView: View {
                     Text(description)
                         .font(.caption)
                         .fontWeight(.thin)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.customForeground)
                 }
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.white, in: .rect(cornerRadius: 16))
+            .background(.customCard, in: .rect(cornerRadius: 16))
         }
     }
 }

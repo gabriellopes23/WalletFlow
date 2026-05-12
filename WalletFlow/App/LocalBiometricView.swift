@@ -15,15 +15,20 @@ struct LocalBiometricView: View {
     @State private var text = "Please authentication"
     
     var body: some View {
-        VStack {
-            if isAuthenticated {
-                ContentView()
+        ZStack {
+            
+            if profileVM.biometricEnable {
+                if isAuthenticated {
+                    ContentView()
+                } else {
+                    BiometricView()
+                        .onAppear {
+                            authenticated()
+                        }
+                }
             } else {
-                BiometricView()
+                ContentView()
             }
-        }
-        .onAppear {
-            authenticated()
         }
     }
     
