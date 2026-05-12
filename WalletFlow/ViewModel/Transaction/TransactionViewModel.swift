@@ -64,6 +64,8 @@ class TransactionViewModel: ObservableObject {
         totalBalance = 0.0
         categories = [:]
         monthly = [:]
+        resulmeTotalIncome = 0
+        resulmeTotalExpense = 0
         
         for transaction in transactions {
             if transaction.type == .income {
@@ -144,5 +146,18 @@ class TransactionViewModel: ObservableObject {
     func deleteAllData() {
         let data = UserDefaults.standard
         data.removeObject(forKey: "transactions")
+        transactions.removeAll()
+        recalculateValues(transactions: transactions)
+    }
+    
+    func deleteTransaction(id: UUID) {
+        transactions.removeAll(where: { $0.id == id })
+        
+        let encoder = JSONEncoder()
+        if let data = try? encoder.encode(transactions) {
+            UserDefaults.standard.set(data, forKey: "transactions")
+        }
+        
+        recalculateValues(transactions: transactions)
     }
 }

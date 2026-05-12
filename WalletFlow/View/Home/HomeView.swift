@@ -29,7 +29,8 @@ struct HomeView: View {
                     
                     ListTransactionsView(
                         goToAllTransactions: { path.append(.allTransaction) },
-                        recentsTransactions: transactionVM.recentsTransactions
+                        recentsTransactions: transactionVM.recentsTransactions,
+                        deleteTransaction: { id in transactionVM.deleteTransaction(id: id) }
                     )
                 }
                 .padding()
@@ -153,6 +154,7 @@ struct ListTransactionsView: View {
     
     var goToAllTransactions: () -> Void
     var recentsTransactions: [Transaction]
+    var deleteTransaction: (_ id: UUID) -> Void
     
     var body: some View {
         if recentsTransactions.isEmpty {
@@ -172,7 +174,9 @@ struct ListTransactionsView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack {
                     ForEach(recentsTransactions) { transaction in
-                        ItemTransactionView(transaction: transaction)
+                        ItemTransactionView(transaction: transaction) {
+                            deleteTransaction(transaction.id)
+                        }
                     }
                 }
             }

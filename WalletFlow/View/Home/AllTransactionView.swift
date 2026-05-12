@@ -15,7 +15,7 @@ struct AllTransactionsView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack {
                 ForEach(transactionVM.transactions.sorted(by: { $0.date > $1.date })) { transaction in
-                    ItemTransactionView(transaction: transaction)
+                    ItemTransactionView(transaction: transaction, action: {} )
                 }
             }
         }

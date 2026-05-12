@@ -15,6 +15,7 @@ class AuthenticationViewModel: ObservableObject {
     @Published var emailProfile: String = ""
     @Published var errorMassage: String = ""
     @Published var showError: Bool = false
+    @Published var successRegister: Bool = false
     
     init() {
         loadUser()
@@ -38,6 +39,7 @@ class AuthenticationViewModel: ObservableObject {
         let enconder = JSONEncoder()
         if let encoder = try? enconder.encode(user) {
             UserDefaults.standard.set(encoder, forKey: "user")
+            successRegister = true
         }
     }
     

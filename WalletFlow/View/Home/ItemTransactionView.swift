@@ -9,7 +9,13 @@ import SwiftUI
 
 struct ItemTransactionView: View {
     
+    @State var dragOffset = CGSize.zero
+    @State var position = CGSize.zero
+    @State var position2 = CGSize.zero
+    
     var transaction: Transaction
+    
+    var action: () -> Void
     
     var body: some View {
         HStack {
@@ -38,5 +44,40 @@ struct ItemTransactionView: View {
         }
         .padding()
         .background(.customCard, in: .rect(cornerRadius: 16))
+        .offset(x: dragOffset.width + position.width)
+        .animation(.linear, value: dragOffset)
+        .gesture(
+            DragGesture()
+                .onChanged({ value in
+                    dragOffset = value.translation
+                    position2.width = dragOffset.width + position.width
+                })
+                .onEnded({ value in
+                    if dragOffset.width < -40 {
+                        position.width = -80
+                    } else {
+                        position.width = 0
+                    }
+                    position2.width = position.width
+                    dragOffset = .zero
+                })
+        )
+        .background(alignment: .trailing) {
+            Button {
+                action()
+            } label: {
+                Image(systemName: "trash")
+                    .padding()
+                    .foregroundStyle(.customCardForeground)
+                    .frame(maxWidth: 80, maxHeight: .infinity)
+                    .background(.customCard, in: .rect(cornerRadius: 16))
+            }
+
+        }
     }
+}
+
+#Preview {
+    ItemTransactionView(transaction: Transaction(id: UUID(), type: .expense, description: "Food", amount: 200, category: .bills, date: .now), action: {} )
+        .background(.black)
 }

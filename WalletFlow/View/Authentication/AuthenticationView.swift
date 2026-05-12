@@ -22,40 +22,9 @@ struct AuthenticationView: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            VStack(spacing: 10) {
-                Image(systemName: "wallet.bifold")
-                    .padding()
-                    .foregroundStyle(.customPrimary)
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .frame(width: 80, height: 80)
-                    .background(.customPrimary.opacity(0.2), in: .rect(cornerRadius: 16))
-                
-                Text("WalletFlow")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.customForeground)
-                
-                Text("Your personal finance manager")
-                    .foregroundStyle(.gray)
-            }
+            HeaderAuthView(foregroundIcon: .customPrimary, foregroundTitle: .customForeground)
             
-            HStack {
-                ItemSegmentedAuthenticationView(isSelected: {
-                    withAnimation {
-                        isSelectedAuthType = .signin
-                    }
-                }, color: isSelectedAuthType == .signin ? .white : .clear, title: "Sign In")
-                
-                ItemSegmentedAuthenticationView(isSelected: {
-                    withAnimation {
-                        isSelectedAuthType = .register
-                    }
-                }, color: isSelectedAuthType == .register ? .white : .clear, title: "Register")
-            }
-            .padding(5)
-            .frame(maxWidth: .infinity)
-            .background(.gray.opacity(0.15), in: .rect(cornerRadius: 16))
+            SegmentedAuthView(isSelectedAuthType: $isSelectedAuthType)
             
             VStack {
                 if isSelectedAuthType == .register {
@@ -67,23 +36,19 @@ struct AuthenticationView: View {
                 CustomTextFieldAuthentication(text: $password, titleKey: "Password", isPassowd: true)
             }
             
-            Button {
+            ButtonAuthentication(isSelectedAuthType: $isSelectedAuthType) {
                 if isSelectedAuthType == .register {
                     authVM.register(fullName: fullName, email: email, password: password)
                 } else {
                     authVM.login(email: email, password: password)
                 }
-            } label: {
-                Text(isSelectedAuthType == .signin ? "Sign In" : "Create Account")
-                    .padding()
-                    .font(.headline)
-                    .fontWeight(.heavy)
-                    .foregroundStyle(.customForeground)
-                    .frame(maxWidth: .infinity)
-                    .background(.customPrimary, in: .rect(cornerRadius: 16))
             }
+            
         }
         .alert(authVM.errorMassage, isPresented: $authVM.showError, actions: {
+            Button("Ok", role: .cancel, action: {})
+        })
+        .alert("Registration completed successfully. Now Log in", isPresented: $authVM.successRegister, actions: {
             Button("Ok", role: .cancel, action: {})
         })
         .padding()
@@ -95,6 +60,58 @@ struct AuthenticationView: View {
         fullName = ""
         email = ""
         password = ""
+    }
+}
+
+// MARK: - HeaderAuthView
+struct HeaderAuthView: View {
+    
+    var foregroundIcon: Color
+    var foregroundTitle: Color
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "wallet.bifold")
+                .padding()
+                .foregroundStyle(foregroundIcon)
+                .font(.largeTitle)
+                .fontWeight(.semibold)
+                .frame(width: 80, height: 80)
+                .background(foregroundIcon.opacity(0.2), in: .rect(cornerRadius: 16))
+            
+            Text("WalletFlow")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundStyle(foregroundTitle)
+            
+            Text("Your personal finance manager")
+                .foregroundStyle(.gray)
+        }
+    }
+}
+
+// MARK: - SegmentedAuthView
+struct SegmentedAuthView: View {
+    
+    @Binding var isSelectedAuthType: Authentication
+    
+    var body: some View {
+        HStack {
+            ItemSegmentedAuthenticationView(isSelected: {
+                withAnimation {
+                    isSelectedAuthType = .signin
+                }
+            }, color: isSelectedAuthType == .signin ? .white : .clear, title: "Sign In")
+            
+            ItemSegmentedAuthenticationView(isSelected: { 
+                withAnimation {
+                    isSelectedAuthType = .register
+                }
+            }, color: isSelectedAuthType == .register ? .white : .clear, title: "Register")
+        }
+        .padding(5)
+        .frame(maxWidth: .infinity)
+        .background(.gray.opacity(0.15), in: .rect(cornerRadius: 16))
     }
 }
 
@@ -144,6 +161,27 @@ struct ItemSegmentedAuthenticationView: View {
                 .foregroundStyle(.black)
                 .fontWeight(.semibold)
                 .background(color, in: .rect(cornerRadius: 16))
+        }
+    }
+}
+
+// MARK: - ButtonAuthentication
+struct ButtonAuthentication: View {
+    
+    @Binding var isSelectedAuthType: Authentication
+    var action: () -> Void
+    
+    var body: some View {
+        Button {
+            action()
+        } label: {
+            Text(isSelectedAuthType == .signin ? "Sign In" : "Create Account")
+                .padding()
+                .font(.headline)
+                .fontWeight(.heavy)
+                .foregroundStyle(.customPrimaryForeground)
+                .frame(maxWidth: .infinity)
+                .background(.customPrimary, in: .rect(cornerRadius: 16))
         }
     }
 }
