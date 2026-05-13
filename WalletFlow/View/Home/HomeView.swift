@@ -13,7 +13,8 @@ struct HomeView: View {
     @EnvironmentObject var profileVM: ProfileSettingsViewModel
     
     @State private var path: [RoutesHome] = []
-    @State private var showAddTransaction: Bool = false
+    @State private var showAddTransaction = false
+    @State private var selectedTransaction: Transaction?
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -30,7 +31,9 @@ struct HomeView: View {
                     ListTransactionsView(
                         goToAllTransactions: { path.append(.allTransaction) },
                         recentsTransactions: transactionVM.recentsTransactions,
-                        deleteTransaction: { id in transactionVM.deleteTransaction(id: id) }
+                        deleteTransaction: { id in transactionVM.deleteTransaction(id: id) }, editTransaction: { transaction in
+                            selectedTransaction = transaction
+                        }
                     )
                 }
                 .padding()
@@ -40,12 +43,19 @@ struct HomeView: View {
                     showAddTransaction.toggle()
                 }
             }
-            .sheet(isPresented: $showAddTransaction, content: {
-                AddTransactionView()
+            .sheet(item: $selectedTransaction, content: { item in
+                AddTransactionView(transaction: item)
+                    .id(selectedTransaction?.id)
                     .presentationDetents([.fraction(0.75)])
                     .presentationCornerRadius(16)
                     .interactiveDismissDisabled(true)
             })
+            .sheet(isPresented: $showAddTransaction) {
+                AddTransactionView()
+                    .presentationDetents([.fraction(0.75)])
+                    .presentationCornerRadius(16)
+                    .interactiveDismissDisabled(true)
+            }
             .navigationDestination(for: RoutesHome.self) { path in
                 switch path {
                 case .allTransaction:
@@ -155,6 +165,7 @@ struct ListTransactionsView: View {
     var goToAllTransactions: () -> Void
     var recentsTransactions: [Transaction]
     var deleteTransaction: (_ id: UUID) -> Void
+    var editTransaction: (Transaction) -> Void
     
     var body: some View {
         if recentsTransactions.isEmpty {
@@ -176,6 +187,8 @@ struct ListTransactionsView: View {
                     ForEach(recentsTransactions) { transaction in
                         ItemTransactionView(transaction: transaction) {
                             deleteTransaction(transaction.id)
+                        } edit: {
+                            editTransaction(transaction)
                         }
                     }
                 }

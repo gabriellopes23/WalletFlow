@@ -10,11 +10,19 @@ import Foundation
 @MainActor
 class AddTransactionViewModel: ObservableObject {
     
-    @Published var description: String = ""
-    @Published var amount: Double? = nil
-    @Published var selectedCategory: TransactionCategory = .bills
-    @Published var isSelected: TransactionType = .expense
-    @Published var selectedDate: Date = .now
+    @Published var description: String
+    @Published var amount: Double?
+    @Published var selectedCategory: TransactionCategory
+    @Published var isSelected: TransactionType
+    @Published var selectedDate: Date
+    
+    init(transation: Transaction? = nil) {
+        description = transation?.description ?? ""
+        amount = transation?.amount ?? nil
+        selectedCategory = transation?.category ?? .bills
+        isSelected = transation?.type ?? .expense
+        selectedDate = transation?.date ?? .now
+    }
     
     var filterCategories: [TransactionCategory] {
         return TransactionCategory.allCases.filter({ $0.type == isSelected })
@@ -36,8 +44,9 @@ class AddTransactionViewModel: ObservableObject {
         }
     }
     
-    func addTransaction() -> Transaction {
+    func addTransaction(id: UUID?) -> Transaction {
         let newTransaction = Transaction(
+            id: id ?? UUID(),
             type: isSelected,
             description: description,
             amount: amount ?? 0.0,
@@ -55,7 +64,7 @@ class AddTransactionViewModel: ObservableObject {
     }
     
     func submitTransaction(transactionVM: TransactionViewModel) {
-        transactionVM.addNewTransaction(transaction: addTransaction())
+        transactionVM.addNewTransaction(transaction: addTransaction(id: nil))
         resetFields()
     }
 }

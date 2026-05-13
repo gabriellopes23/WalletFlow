@@ -15,7 +15,8 @@ struct ItemTransactionView: View {
     
     var transaction: Transaction
     
-    var action: () -> Void
+    var delete: () -> Void
+    var edit: () -> Void
     
     var body: some View {
         HStack {
@@ -54,7 +55,7 @@ struct ItemTransactionView: View {
                 })
                 .onEnded({ value in
                     if dragOffset.width < -40 {
-                        position.width = -80
+                        position.width = -140
                     } else {
                         position.width = 0
                     }
@@ -63,21 +64,36 @@ struct ItemTransactionView: View {
                 })
         )
         .background(alignment: .trailing) {
-            Button {
-                action()
-            } label: {
-                Image(systemName: "trash")
-                    .padding()
-                    .foregroundStyle(.customCardForeground)
-                    .frame(maxWidth: 80, maxHeight: .infinity)
-                    .background(.customCard, in: .rect(cornerRadius: 16))
+            HStack(spacing: 0) {
+                Button {
+                    withAnimation {
+                        position.width = 0
+                    }
+                    edit()
+                } label: {
+                    Image(systemName: "pencil")
+                        .padding()
+                        .foregroundStyle(.customCardForeground)
+                        .frame(maxWidth: 70, maxHeight: .infinity)
+                        .background(.green, in: .rect(cornerRadius: 16))
+                }
+                Button {
+                    delete()
+                } label: {
+                    Image(systemName: "trash")
+                        .padding()
+                        .foregroundStyle(.customCardForeground)
+                        .frame(maxWidth: 70, maxHeight: .infinity)
+                        .background(.red, in: .rect(cornerRadius: 16))
+                }
             }
-
+            .opacity(position.width == -140 ? 1.0 : 0.0)
+            .animation(.linear, value: position.width)
         }
     }
 }
 
 #Preview {
-    ItemTransactionView(transaction: Transaction(id: UUID(), type: .expense, description: "Food", amount: 200, category: .bills, date: .now), action: {} )
+    ItemTransactionView(transaction: Transaction(id: UUID(), type: .expense, description: "Food", amount: 200, category: .bills, date: .now), delete: {}, edit: {} )
         .background(.black)
 }

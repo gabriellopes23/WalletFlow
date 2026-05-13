@@ -15,7 +15,11 @@ struct AllTransactionsView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack {
                 ForEach(transactionVM.transactions.sorted(by: { $0.date > $1.date })) { transaction in
-                    ItemTransactionView(transaction: transaction, action: {} )
+                    ItemTransactionView(transaction: transaction, delete: {
+                        transactionVM.deleteTransaction(id: transaction.id)
+                    }, edit: {
+                        
+                    })
                 }
             }
         }

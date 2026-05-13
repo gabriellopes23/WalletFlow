@@ -36,6 +36,11 @@ struct AuthenticationView: View {
                 CustomTextFieldAuthentication(text: $password, titleKey: "Password", isPassowd: true)
             }
             
+            if authVM.showMessage {
+                Text(authVM.messageInfo)
+                    .foregroundStyle(authVM.successRegister ? .green : .red)
+            }
+            
             ButtonAuthentication(isSelectedAuthType: $isSelectedAuthType) {
                 if isSelectedAuthType == .register {
                     authVM.register(fullName: fullName, email: email, password: password)
@@ -45,21 +50,9 @@ struct AuthenticationView: View {
             }
             
         }
-        .alert(authVM.errorMassage, isPresented: $authVM.showError, actions: {
-            Button("Ok", role: .cancel, action: {})
-        })
-        .alert("Registration completed successfully. Now Log in", isPresented: $authVM.successRegister, actions: {
-            Button("Ok", role: .cancel, action: {})
-        })
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.customBG)
-    }
-    
-    func resetFields() {
-        fullName = ""
-        email = ""
-        password = ""
     }
 }
 

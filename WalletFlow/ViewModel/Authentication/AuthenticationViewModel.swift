@@ -13,8 +13,8 @@ class AuthenticationViewModel: ObservableObject {
     @Published var firstLetterName: String = ""
     @Published var nameProfile: String = ""
     @Published var emailProfile: String = ""
-    @Published var errorMassage: String = ""
-    @Published var showError: Bool = false
+    @Published var messageInfo: String = ""
+    @Published var showMessage: Bool = false
     @Published var successRegister: Bool = false
     
     init() {
@@ -34,12 +34,20 @@ class AuthenticationViewModel: ObservableObject {
     }
     
     func register(fullName: String, email: String, password: String) {
-        let user = UserModel(name: fullName, email: email, password: password)
         
-        let enconder = JSONEncoder()
-        if let encoder = try? enconder.encode(user) {
-            UserDefaults.standard.set(encoder, forKey: "user")
-            successRegister = true
+        if validEmail(email: email) && password.count >= 6 {
+            let user = UserModel(name: fullName, email: email, password: password)
+            
+            let enconder = JSONEncoder()
+            if let encoder = try? enconder.encode(user) {
+                UserDefaults.standard.set(encoder, forKey: "user")
+                successRegister = true
+                showMessage = true
+                messageInfo = "Registration complete, now log in."
+            }
+        } else {
+            showMessage = true
+            messageInfo = "Invalid email or password, please try again!"
         }
     }
     
@@ -52,10 +60,16 @@ class AuthenticationViewModel: ObservableObject {
                     isLogged = true
                 } else {
                     isLogged = false
-                    errorMassage = "❌ Invalid email or password"
-                    showError = true
+                    showMessage = true
+                    messageInfo = "Invalid email or password, please try again or create an account."
                 }
             }
         }
+    }
+    
+    func validEmail(email: String) -> Bool {
+        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailFormat)
+        return emailPredicate.evaluate(with: email)
     }
 }

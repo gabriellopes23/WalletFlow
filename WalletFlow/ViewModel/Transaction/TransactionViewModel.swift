@@ -9,6 +9,7 @@ import Foundation
 
 class TransactionViewModel: ObservableObject {
     
+    // MARK: - Properties
     @Published var transactions: [Transaction] = []
     @Published var totalIncome: Double = 0.0
     @Published var totalExpense: Double = 0.0
@@ -17,22 +18,24 @@ class TransactionViewModel: ObservableObject {
     @Published var monthly: [Date: Double] = [:]
     @Published var monthlySummary: Double = 0.0
     
-    @Published var resulmeTotalIncome = 0
-    @Published var resulmeTotalExpense = 0
+    @Published var totalIncomeCount = 0
+    @Published var totalExpenseCount = 0
     
     var profileVM: ProfileSettingsViewModel
     let notificationService = NotificationService()
-    
-    init(profileVM: ProfileSettingsViewModel) {
-        self.profileVM = profileVM
-        loadTransactions()
-        recalculateValues(transactions: transactions)
-    }
     
     var recentsTransactions: [Transaction] {
         Array(transactions.sorted(by: { $0.date > $1.date }).prefix(6))
     }
     
+    // MARK: - Init
+    init(profileVM: ProfileSettingsViewModel) {
+        self.profileVM = profileVM
+        loadTransactions()
+        recalculateValues()
+    }
+    
+    // MARK: - CRUD
     func loadTransactions() {
         if let data = UserDefaults.standard.data(forKey: "transactions") {
             let decoder = JSONDecoder()
@@ -46,7 +49,7 @@ class TransactionViewModel: ObservableObject {
     func addNewTransaction(transaction: Transaction) {
         transactions.append(transaction)
         saveTransactions()
-        recalculateValues(transactions: transactions)
+        recalculateValues()
     }
     
     func saveTransactions() {
@@ -57,24 +60,24 @@ class TransactionViewModel: ObservableObject {
         }
     }
     
-    func recalculateValues(transactions: [Transaction]) {
+    func recalculateValues() {
         
         totalIncome = 0.0
         totalExpense = 0.0
         totalBalance = 0.0
         categories = [:]
         monthly = [:]
-        resulmeTotalIncome = 0
-        resulmeTotalExpense = 0
+        totalIncomeCount = 0
+        totalExpenseCount = 0
         
         for transaction in transactions {
             if transaction.type == .income {
-                resulmeTotalIncome += 1
+                totalIncomeCount += 1
                 totalIncome += transaction.amount
             }
             
             if transaction.type == .expense {
-                resulmeTotalExpense += 1
+                totalExpenseCount += 1
                 totalExpense += transaction.amount
                 
                 categories[transaction.category, default: 0.0] += transaction.amount
@@ -147,17 +150,21 @@ class TransactionViewModel: ObservableObject {
         let data = UserDefaults.standard
         data.removeObject(forKey: "transactions")
         transactions.removeAll()
-        recalculateValues(transactions: transactions)
+        recalculateValues()
     }
     
     func deleteTransaction(id: UUID) {
         transactions.removeAll(where: { $0.id == id })
+        saveTransactions()
+        recalculateValues()
+    }
+    
+    func updateTransaction(updateTransaction: Transaction) {
+        guard let indexTransaction = transactions.firstIndex(where: { $0.id == updateTransaction.id }) else { return }
         
-        let encoder = JSONEncoder()
-        if let data = try? encoder.encode(transactions) {
-            UserDefaults.standard.set(data, forKey: "transactions")
-        }
+        transactions[indexTransaction] = updateTransaction
         
-        recalculateValues(transactions: transactions)
+        saveTransactions()
+        recalculateValues()
     }
 }

@@ -13,7 +13,14 @@ struct AddTransactionView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @StateObject private var addTransactionVM: AddTransactionViewModel = AddTransactionViewModel()
+    @StateObject private var addTransactionVM: AddTransactionViewModel
+    
+    var transaction: Transaction?
+    
+    init(transaction: Transaction? = nil) {
+        self.transaction = transaction
+        _addTransactionVM = StateObject(wrappedValue: AddTransactionViewModel(transation: transaction))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -23,8 +30,13 @@ struct AddTransactionView: View {
             
             FormAddTransactionView(addTransactionVM: addTransactionVM)
             
-            ButtonAddTransactionView {
-                addTransactionVM.submitTransaction(transactionVM: transactionVM)
+            ButtonAddTransactionView(selectedTransaction: transaction) {
+                if let transaction {
+                    let updateTransaction = addTransactionVM.addTransaction(id: transaction.id)
+                    transactionVM.updateTransaction(updateTransaction: updateTransaction)
+                } else {
+                    addTransactionVM.submitTransaction(transactionVM: transactionVM)
+                }
                 dismiss.callAsFunction()
             }
             .opacity(addTransactionVM.validForm() ? 1.0 : 0.7)
@@ -161,13 +173,14 @@ struct FormModifier: ViewModifier {
 // MARK: - ButtonAddTransactionView
 struct ButtonAddTransactionView: View {
     
+    var selectedTransaction: Transaction?
     var addTransaction: () -> Void
     
     var body: some View {
         Button {
             addTransaction()
         } label: {
-            Text("Add Transaction")
+            Text(selectedTransaction != nil ? "Update Transaction" : "Add Transaction")
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(.customPrimary, in: .rect(cornerRadius: 16))

@@ -21,7 +21,7 @@ struct ProfileView: View {
                     
                     HeaderProfileView(name: authVM.nameProfile, email: authVM.emailProfile)
                     
-                    ResumeTransactionsView(resulmeTotalTransactions: transactionVM.transactions.count, resulmeTotalIncome: transactionVM.resulmeTotalIncome, resulmeTotalExpense: transactionVM.resulmeTotalExpense)
+                    ResumeTransactionsView(resulmeTotalTransactions: transactionVM.transactions.count, resulmeTotalIncome: transactionVM.totalIncomeCount, resulmeTotalExpense: transactionVM.totalExpenseCount)
                     
                     OptionsProfileView(path: $path)
                     
